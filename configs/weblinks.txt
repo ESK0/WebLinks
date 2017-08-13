@@ -1,0 +1,7 @@
+// Usage: "trigger/key" "Window size" address
+// Window size can be: normal or height=xxx,width=xxx
+// Variables: {NAME}, {STEAMID}, {STEAMID64}, {SERVER_IP}, {SERVER_PORT}
+"google" "normal" https://www.google.cz/
+"youtube" "normal" https://www.youtube.com/
+"tracker" "normal" https://sm.hexa-core.eu/
+"!facebook" "height=1010,width=1920" https://facebook.com/
