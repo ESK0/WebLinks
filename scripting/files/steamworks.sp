@@ -1,11 +1,13 @@
 public void AddServerToTracker()
 {
+  LogMessage("Adding to tracker");
   int iIp = GetConVarInt(FindConVar("hostip"));
   int iPort = GetConVarInt(FindConVar("hostport"));
   char sHostIp[32];
   Format(sHostIp, sizeof(sHostIp), "%d.%d.%d.%d", iIp >>> 24 & 255, iIp >>> 16 & 255, iIp >>> 8 & 255, iIp & 255);
   char sURLAddress[2048];
-  Format(sURLAddress, sizeof(sURLAddress), "https://sm.hexa-core.eu/api/v1/tracker/2/4/%s/%s/%i?pHash=%s&pName=%s&pAuthor=%s", PLUGIN_VERSION, sHostIp, iPort, PLUGIN_HASH, PLUGIN_NAME, PLUGIN_AUTHOR);
+  Format(sURLAddress, sizeof(sURLAddress), "https://sm.hexa-core.eu/api/v1/tracker/2/5/%s/%s/%i?pHash=%s&pName=%s&pAuthor=%s", PLUGIN_VERSION, sHostIp, iPort, PLUGIN_HASH, PLUGIN_NAME, PLUGIN_AUTHOR);
+  LogMessage(sURLAddress);
   Handle hHTTPRequest = SteamWorks_CreateHTTPRequest(k_EHTTPMethodGET, sURLAddress);
   bool bNetwork = SteamWorks_SetHTTPRequestNetworkActivityTimeout(hHTTPRequest, 10);
   bool bHeader = SteamWorks_SetHTTPRequestHeaderValue(hHTTPRequest, "api_key", API_KEY);
@@ -73,12 +75,14 @@ public void WebLinks_Initialize(int client, char[] sz_Param, char[] sz_Address, 
   if(IsValidClient(client))
   {
     char szClientIp[64];
+    //char szBuffer[512];
     char szURLAddress[2048];
     char szSteamId[128];
     GetClientAuthId(client, AuthId_SteamID64, szSteamId, sizeof(szSteamId));
     GetClientIP(client, szClientIp, sizeof(szClientIp));
     ReplaceTextVariables(client, sz_Address, len);
-    Format(szURLAddress, sizeof(szURLAddress), "https://redirect.hexa-core.eu/api/v1/redirect/%s/%s?url=%s&params=%s", szSteamId, szClientIp, sz_Address, sz_Param);
+    URLEncode(sz_Address, len);
+    Format(szURLAddress, sizeof(szURLAddress), "%s/api/v1/redirect/%s/%s?url=%s&params=%s",URLPath, szSteamId, szClientIp, sz_Address, sz_Param);
     Handle hHTTPRequest = SteamWorks_CreateHTTPRequest(k_EHTTPMethodGET, szURLAddress);
     bool bNetwork = SteamWorks_SetHTTPRequestNetworkActivityTimeout(hHTTPRequest, 10);
     bool bContext = SteamWorks_SetHTTPRequestContextValue(hHTTPRequest, GetClientUserId(client));
@@ -128,11 +132,10 @@ public int WebLinks_OpenWeb(Handle hRequest, bool bFailure, bool bRequestSuccess
         hKeyValues.GetString("http_code", szHttpCode, sizeof(szHttpCode));
         if(StrEqual(szHttpCode, "API_REQUEST_SUCCESS", false))
         {
-          FakeClientCommand(client, "say motd");
           char szBuffer[2048];
           char szSteamId[128];
           GetClientAuthId(client, AuthId_SteamID64, szSteamId, sizeof(szSteamId));
-          Format(szBuffer, sizeof(szBuffer), "https://redirect.hexa-core.eu/to/%s", szSteamId);
+          Format(szBuffer, sizeof(szBuffer), "%s/to/%s",URLPath, szSteamId);
           ShowMOTDPanel(client, "WebLinks by ESK0 & NOMIS", szBuffer, MOTDPANEL_TYPE_URL);
         }
       }

@@ -4,6 +4,8 @@
 #pragma semicolon 1
 #pragma newdecls required
 
+#define URLPath "https://redirect.hexa-core.eu"
+
 #include "files/globals.sp"
 #include "files/client.sp"
 #include "files/misc.sp"

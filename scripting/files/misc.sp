@@ -27,6 +27,13 @@ public void ReplaceTextVariables(int client, char[] text, int len)
     IntToString(port, szBuffer, sizeof(szBuffer));
     ReplaceString(text, len, "{SERVER_PORT}", szBuffer);
   }
+  if(StrContains(text, "{CURRENTMAP}") != -1)
+  {
+    char sTempMap[256];
+    GetCurrentMap(sTempMap, sizeof(sTempMap));
+    GetMapDisplayName(sTempMap, szBuffer, sizeof(szBuffer));
+    ReplaceString(text, len, "{CURRENTMAP}", szBuffer);
+  }
 }
 public void LoadWebLinks()
 {
@@ -79,4 +86,16 @@ stock void GetServerIP(char[] buffer, int len)
   ips[2] = (ip >> 8) & 0x000000FF;
   ips[3] = ip & 0x000000FF;
   Format(buffer, len, "%d.%d.%d.%d:%d", ips[0], ips[1], ips[2], ips[3]);
+}
+stock void URLEncode(char[] str, int len)
+{
+    char[] str2 = new char[len*3+1];
+    Format(str2,len*3+1,"%s",str);
+    char ReplaceThis[20][] = {"%", " ", "!", "*", "'", "(", ")", ";", ":", "@", "&", "=", "+", "$", ",", "/", "?", "#", "[", "]"};
+    char ReplaceWith[20][] = {"%25", "%20", "%21", "%2A", "%27", "%28", "%29", "%3B", "%3A", "%40", "%26", "%3D", "%2B", "%24", "%2C", "%2F", "%3F", "%23", "%5B", "%5D"};
+    for(int x = 0; x < 20 ; x++)
+    {
+      ReplaceString(str2, len, ReplaceThis[x], ReplaceWith[x]);
+    }
+    Format(str, len, "%s", str2);
 }
