@@ -1,0 +1,7 @@
+﻿"Phrases"
+{
+	"Chat CSGO Info"
+	{
+		"en"			"› To open website please go to TAB and click on 'Server website'."
+	}
+}

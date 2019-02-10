@@ -1,0 +1,7 @@
+﻿"Phrases"
+{
+	"Chat CSGO Info"
+	{
+		"cze"			"› Pro otevření webové stránky klikni na 'Stránka serveru' v TAB nabídce."
+	}
+}

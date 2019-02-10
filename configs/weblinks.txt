@@ -5,3 +5,4 @@
 "youtube" "normal" https://www.youtube.com/
 "tracker" "normal" https://sm.hexa-core.eu/
 "!facebook" "height=1010,width=1920" https://facebook.com/
+"!logout" "normal" https://weblinks.hexa-core.eu/auth/logout
