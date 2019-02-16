@@ -136,6 +136,8 @@ public void LoadConfig()
     if (!FileExists(sConfigPath)) {
 
         SetFailState("%s Unable to find config (for CS:GO is required) %s", TAG, sConfigPath);
+        
+        delete kvConfig;
         return;
     }
 

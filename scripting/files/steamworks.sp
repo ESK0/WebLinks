@@ -9,7 +9,7 @@ public void AddServerToTracker()
 
     Format(sHostIp, sizeof(sHostIp), "%d.%d.%d.%d", iIp >>> 24 & 255, iIp >>> 16 & 255, iIp >>> 8 & 255, iIp & 255);
 
-    Format(sURLAddress, sizeof(sURLAddress), "https://sm.hexa-core.eu/api/v1/tracker/2/7/%s/%s/%i?pHash=%s&pName=%s&pAuthor=%s", PLUGIN_VERSION, sHostIp, iPort, PLUGIN_HASH, PLUGIN_NAME, PLUGIN_AUTHOR);
+    Format(sURLAddress, sizeof(sURLAddress), "https://sm.hexa-core.eu/api/v1/tracker/2/8/%s/%s/%i?pHash=%s&pName=%s&pAuthor=%s", PLUGIN_VERSION, sHostIp, iPort, PLUGIN_HASH, PLUGIN_NAME, PLUGIN_AUTHOR);
     LogMessage(sURLAddress);
 
     Handle hHTTPRequest = SteamWorks_CreateHTTPRequest(k_EHTTPMethodGET, sURLAddress);
@@ -86,6 +86,8 @@ void GetTrackerOutput(const char[] szBody)
             }
         }
     }
+
+    delete hKeyValues;
 }
 
 public void WebLinks_Initialize(int client, char[] sz_Param, char[] sz_Address, int len)
