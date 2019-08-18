@@ -1,5 +1,6 @@
 #include <sourcemod>
 #include <steamworks>
+#include <multicolors>
 
 #pragma semicolon 1
 #pragma newdecls required
@@ -33,7 +34,6 @@ public void OnPluginStart()
 
 public void OnMapStart()
 {
-    AddServerToTracker();
     LoadConfig();
     LoadWebLinks();
 }
@@ -42,6 +42,26 @@ public void OnMapEnd()
 {
     if (bCSGO)
         LoadConfig();
+}
+
+public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max) {
+
+	CreateNative("WebLinks_OpenUrl", Native_OpenUrl);
+	
+	RegPluginLibrary("E_Weblinks");
+	
+	return APLRes_Success;
+}
+
+public int Native_OpenUrl(Handle hPlugin, int iNumParams)
+{
+    int iClient = GetNativeCell(1);
+    char sz_Address[1024];
+    char sz_Param[64];
+
+    GetNativeString(2, sz_Address, sizeof(sz_Address));
+    
+    WebLinks_Initialize(iClient, sz_Param, sz_Address, sizeof(sz_Address));
 }
 
 public Action OnClientSayCommand(int client, const char[] command, const char[] sArgs)
