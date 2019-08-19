@@ -1,95 +1,3 @@
-public void AddServerToTracker()
-{
-    LogMessage("Adding to tracker");
-
-    int iIp = GetConVarInt(FindConVar("hostip"));
-    int iPort = GetConVarInt(FindConVar("hostport"));
-    char sHostIp[32];
-    char sURLAddress[2048];
-
-    Format(sHostIp, sizeof(sHostIp), "%d.%d.%d.%d", iIp >>> 24 & 255, iIp >>> 16 & 255, iIp >>> 8 & 255, iIp & 255);
-
-    Format(sURLAddress, sizeof(sURLAddress), "https://sm.hexa-core.eu/api/v1/tracker/2/8/%s/%s/%i?pHash=%s&pName=%s&pAuthor=%s", PLUGIN_VERSION, sHostIp, iPort, PLUGIN_HASH, PLUGIN_NAME, PLUGIN_AUTHOR);
-    LogMessage(sURLAddress);
-
-    Handle hHTTPRequest = SteamWorks_CreateHTTPRequest(k_EHTTPMethodGET, sURLAddress);
-    bool bNetwork = SteamWorks_SetHTTPRequestNetworkActivityTimeout(hHTTPRequest, 10);
-    bool bHeader = SteamWorks_SetHTTPRequestHeaderValue(hHTTPRequest, "api_key", API_KEY);
-    bool bCallback = SteamWorks_SetHTTPCallbacks(hHTTPRequest, TrackerCallBack);
-
-    if (bNetwork == false || bHeader == false || bCallback == false) {
-
-        delete hHTTPRequest;
-        return;
-    }
-
-    bool bRequest = SteamWorks_SendHTTPRequest(hHTTPRequest);
-    
-    if (bRequest == false) {
-
-        delete hHTTPRequest;
-        return;
-    }
-
-    SteamWorks_PrioritizeHTTPRequest(hHTTPRequest);
-}
-
-public int TrackerCallBack(Handle hRequest, bool bFailure, bool bRequestSuccessful, EHTTPStatusCode eStatusCode, any data1)
-{
-    if (bFailure || !bRequestSuccessful) {
-
-        delete hRequest;
-        return;
-    }
-    
-    int iBodySize;
-    
-    if (!SteamWorks_GetHTTPResponseBodySize(hRequest, iBodySize)) {
-
-        delete hRequest;
-        return;
-    }
-
-    char[] szBody = new char[iBodySize + 1];
-    
-    if (!SteamWorks_GetHTTPResponseBodyData(hRequest, szBody, iBodySize)) {
-
-        delete hRequest;
-        return;
-    }
-
-    GetTrackerOutput(szBody);
-}
-
-void GetTrackerOutput(const char[] szBody)
-{
-    KeyValues hKeyValues = new KeyValues("response");
-    
-    if (hKeyValues.ImportFromString(szBody)) {
-
-        if (hKeyValues.GotoFirstSubKey()) {
-
-            char szHttpCode[64];
-            char szMesasge[512];
-
-            hKeyValues.GetString("http_code", szHttpCode, sizeof(szHttpCode));
-
-            if (StrEqual(szHttpCode, "API_PLUGIN_VERSION_OUTDATED", false) || StrEqual(szHttpCode, "API_PLUGIN_OUTDATED", false)) {
-                
-                hKeyValues.GetString("message", szMesasge, sizeof(szMesasge));
-                LogError(szMesasge);
-
-            } else if (StrEqual(szHttpCode, "API_TOO_MANY_REQUESTS", false)) {
-
-                hKeyValues.GetString("message", szMesasge, sizeof(szMesasge));
-                LogMessage(szMesasge);
-            }
-        }
-    }
-
-    delete hKeyValues;
-}
-
 public void WebLinks_Initialize(int client, char[] sz_Param, char[] sz_Address, int len)
 {
     if (IsValidClient(client)) {
@@ -185,7 +93,7 @@ public int WebLinks_OpenWeb(Handle hRequest, bool bFailure, bool bRequestSuccess
 
                     if (bCSGO) {
 
-                        PrintToChat(client, "%s %T", TAG, "Chat CSGO Info", client);
+                        CPrintToChat(client, "%s %T", TAG_COLOR, "Chat CSGO Info", client);
 
                     } else {
 
@@ -193,7 +101,7 @@ public int WebLinks_OpenWeb(Handle hRequest, bool bFailure, bool bRequestSuccess
                         char szSteamId[128];
 
                         GetClientAuthId(client, AuthId_SteamID64, szSteamId, sizeof(szSteamId));
-                        Format(szBuffer, sizeof(szBuffer), "%s/method/%s", WEBLINKS_API, szSteamId);
+                        Format(szBuffer, sizeof(szBuffer), "%s/method/steamid/%s", WEBLINKS_API, szSteamId);
                         ShowMOTDPanel(client, "WebLinks by ESK0 & NOMIS", szBuffer, MOTDPANEL_TYPE_URL);
                     }
 
