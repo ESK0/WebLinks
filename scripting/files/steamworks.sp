@@ -111,5 +111,7 @@ public int WebLinks_OpenWeb(Handle hRequest, bool bFailure, bool bRequestSuccess
                 }
             }
         }
+        delete hKeyValues;
     }
+    delete hRequest;
 }
